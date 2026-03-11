@@ -8,8 +8,6 @@ source .venv/bin/activate
 echo "Installing Python dependencies..."
 pip install -r requirements.txt -q
 
-echo "Installing Playwright browsers..."
-playwright install chromium
 
 echo "Installing Node dependencies..."
 cd dashboard
