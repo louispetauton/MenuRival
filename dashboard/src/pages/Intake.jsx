@@ -35,8 +35,9 @@ export default function Intake() {
         body: JSON.stringify({ url: url.trim() }),
       })
       if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.detail || 'Lookup failed')
+        let msg = `Error ${res.status}`
+        try { const err = await res.json(); msg = err.detail || msg } catch {}
+        throw new Error(msg)
       }
       setPreview(await res.json())
     } catch (e) {
