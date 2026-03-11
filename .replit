@@ -1,0 +1,12 @@
+run = "bash start.sh"
+entrypoint = "start.sh"
+
+[env]
+PYTHONPATH = "."
+
+[nix]
+channel = "stable-23_11"
+
+[deployment]
+run = ["bash", "start.sh"]
+deploymentTarget = "cloudrun"

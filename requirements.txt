@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+supabase
+playwright
+beautifulsoup4
+anthropic
+httpx
+python-dotenv
+pydantic
+pydantic-settings
+python-multipart
+pymupdf
