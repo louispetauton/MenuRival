@@ -1,6 +1,9 @@
 import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from pathlib import Path
 from api.routers import restaurants, lookup, ingest, standardize, comparison
 
 logging.basicConfig(level=logging.INFO)
@@ -16,14 +19,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(restaurants.router)
-app.include_router(lookup.router)
-app.include_router(ingest.router)
-app.include_router(standardize.router)
-app.include_router(comparison.router)
+# API routes under /api prefix
+app.include_router(restaurants.router, prefix="/api")
+app.include_router(lookup.router, prefix="/api")
+app.include_router(ingest.router, prefix="/api")
+app.include_router(standardize.router, prefix="/api")
+app.include_router(comparison.router, prefix="/api")
 
 
-@app.get("/health")
+@app.get("/api/health")
 async def health():
     return {"status": "ok", "version": "0.2.0"}
 
@@ -38,3 +42,13 @@ async def on_startup():
         logger.info("Supabase connection OK")
     except Exception as e:
         logger.warning(f"Supabase connection check failed: {e}")
+
+
+# Serve frontend static files — must come after API routes
+DIST = Path(__file__).parent.parent / "dashboard" / "dist"
+if DIST.exists():
+    app.mount("/assets", StaticFiles(directory=DIST / "assets"), name="assets")
+
+    @app.get("/{full_path:path}")
+    async def serve_frontend(full_path: str):
+        return FileResponse(DIST / "index.html")
